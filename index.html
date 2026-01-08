@@ -1,142 +1,30 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="refresh" content="1800">
+<body style="background:#111; color:#eee; text-align:center;">
 
-<title>玄関ダッシュボード</title>
-
-<style>
-body {
-  margin: 0;
-  background: #fff;
-  color: #000;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-}
-section {
-  display: none;
-  padding: 16px;
-}
-#clock {
-  font-size: 64px;
-  text-align: center;
-  margin-bottom: 10px;
-}
-h2 {
-  font-size: 20px;
-  border-bottom: 1px solid #444;
-}
-.bus {
-  font-size: 18px;
-  line-height: 1.6;
-}
-.weather {
-  font-size: 20px;
-  text-align: center;
-}
-</style>
-</head>
-
-<body>
-  <h1>玄関ダッシュボード</h1>
-
-  <div id="clock" style="font-size:32px; margin-top:20px;">
-    --:--
+  <div id="clock" style="font-size:64px; margin-top:80px;">--:--</div>
+  <div id="date" style="font-size:20px; margin-top:10px;">----</div>
+  <div style="margin-top:40px; font-size:18px; opacity:0.7;">
+    Have a nice day.
   </div>
 
   <script>
-    function updateClock() {
+    function update() {
       var d = new Date();
       var h = d.getHours();
       var m = d.getMinutes();
       if (m < 10) m = "0" + m;
+
+      var days = ["SUN","MON","TUE","WED","THU","FRI","SAT"];
+
       document.getElementById("clock").innerHTML = h + ":" + m;
+      document.getElementById("date").innerHTML =
+        days[d.getDay()] + "<br>" +
+        d.getFullYear() + "." +
+        (d.getMonth()+1) + "." +
+        d.getDate();
     }
 
-    updateClock();
-    setInterval(updateClock, 60000);
+    update();
+    setInterval(update, 60000);
   </script>
+
 </body>
-
-<section id="morning">
-  <div id="clock"></div>
-  <div class="weather" id="weather"></div>
-
-  <h2>戸ヶ崎南商店街</h2>
-  <div class="bus">
-    金町駅行<br>
-    07:12 / 07:25 / 07:40<br><br>
-    三郷中央駅行<br>
-    07:18 / 07:33 / 07:48
-  </div>
-</section>
-
-<section id="day">
-  <div id="clock"></div>
-  <div class="weather" id="weather2"></div>
-</section>
-
-<section id="night">
-  <div id="clock"></div>
-
-  <h2>明朝バス（予告）</h2>
-  <div class="bus">
-    戸ヶ崎南商店街 → 金町駅<br>
-    07:12 / 07:25 / 07:40<br><br>
-    天王橋通り → 松戸駅<br>
-    07:10 / 07:30 / 07:50
-  </div>
-</section>
-
-<!--
-  <script>
-function updateClock() {
-  var now = new Date();
-  var h = now.getHours();
-  var m = now.getMinutes();
-  if (m < 10) m = "0" + m;
-  document.querySelectorAll("#clock").forEach(function(el){
-    el.innerHTML = h + ":" + m;
-  });
-
-  document.getElementById("morning").style.display = "none";
-  document.getElementById("day").style.display = "none";
-  document.getElementById("night").style.display = "none";
-
-  if (h >= 5 && h < 10) {
-    document.getElementById("morning").style.display = "block";
-  } else if (h >= 10 && h < 17) {
-    document.getElementById("day").style.display = "block";
-  } else {
-    document.getElementById("night").style.display = "block";
-  }
-}
-
-function loadWeather() {
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", "https://www.jma.go.jp/bosai/forecast/data/forecast/110000.json");
-  xhr.onload = function () {
-    if (xhr.status === 200) {
-      var data = JSON.parse(xhr.responseText);
-      var today = data[0].timeSeries[0].areas[0].weathers[0];
-      var text = "三郷市の天気： " + today;
-      document.getElementById("weather").innerHTML = text;
-      document.getElementById("weather2").innerHTML = text;
-    }
-  };
-  xhr.send();
-}
-
-updateClock();
-loadWeather();
-setInterval(updateClock, 60000);
-</script>
--->
-</body>
-</html>
-
-
-
-
-
