@@ -39,13 +39,26 @@ h2 {
 </head>
 
 <body>
-<h1>玄関ダッシュボード</h1>
-    <p id="test">JS未実行</p>
+  <h1>玄関ダッシュボード</h1>
+
+  <div id="clock" style="font-size:32px; margin-top:20px;">
+    --:--
+  </div>
 
   <script>
-    document.getElementById("test").innerHTML = "JS実行OK";
+    function updateClock() {
+      var d = new Date();
+      var h = d.getHours();
+      var m = d.getMinutes();
+      if (m < 10) m = "0" + m;
+      document.getElementById("clock").innerHTML = h + ":" + m;
+    }
+
+    updateClock();
+    setInterval(updateClock, 60000);
   </script>
 </body>
+
 <section id="morning">
   <div id="clock"></div>
   <div class="weather" id="weather"></div>
@@ -122,6 +135,7 @@ setInterval(updateClock, 60000);
 -->
 </body>
 </html>
+
 
 
 
