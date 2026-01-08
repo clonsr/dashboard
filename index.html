@@ -1,114 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="Dashboard">
+<title>玄関ダッシュボード</title>
 
-  <title>Dashboard</title>
+<style>
+body {
+  margin: 0;
+  background: #fff;
+  color: #000;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  text-align: center;
+}
+
+h1 {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+#now {
+  font-size: 28px;
+  margin-bottom: 30px;
+}
+
+#next {
+  font-size: 64px;
+  font-weight: bold;
+}
+
+#next small {
+  font-size: 28px;
+  display: block;
+  margin-top: 10px;
+}
+
+#after {
+  font-size: 32px;
+  margin-top: 20px;
+  color: #555;
+}
+</style>
 </head>
-<body style="background:#111; color:#eee; text-align:center;">
 
-  <div id="clock" style="font-size:64px; margin-top:80px;">--:--</div>
-  <div id="date" style="font-size:20px; margin-top:10px;">----</div>
-  <div id="bus" style="margin-top:40px;">
-  <div style="font-size:22px;">次のバス</div>
-
-  <div style="margin-top:10px; font-size:26px;">
-    金町駅 行き
-  </div>
-
-  <div id="bus-next" style="font-size:48px; margin-top:10px;">
-    -- 分
-  </div>
-
-  <div id="bus-time" style="font-size:20px;">
-    --
-  </div>
-
-  <div style="margin-top:10px; font-size:16px; opacity:0.7;">
-    次：<span id="bus-next2">--</span>
-  </div>
+<body>
+<div class="container">
+  <h1>金町駅 行き</h1>
+  <div id="now"></div>
+  <div id="next"></div>
+  <div id="after"></div>
 </div>
 
-  <div style="margin-top:40px; font-size:18px; opacity:0.7;">
-    Have a nice day.
-  </div>
-
-  <script>
-    function update() {
-      var d = new Date();
-      var h = d.getHours();
-      var m = d.getMinutes();
-      if (m < 10) m = "0" + m;
-
-      var days = ["SUN","MON","TUE","WED","THU","FRI","SAT"];
-
-      document.getElementById("clock").innerHTML = h + ":" + m;
-      document.getElementById("date").innerHTML =
-        days[d.getDay()] + "<br>" +
-        d.getFullYear() + "." +
-        (d.getMonth()+1) + "." +
-        d.getDate();
-    }
-
-    update();
-    setInterval(update, 60000);
-  </script>
 <script>
-  var times = [
-    "07:12",
-    "07:25",
-    "07:40",
-    "08:05",
-    "08:25",
-    "08:45"
-  ];
+// 金町駅 行き（全系統まとめ）
+var timetable = [
+  "05:29","05:54","06:19","06:49","07:04","07:14","07:29","07:44","07:59",
+  "08:24","08:39","08:54",
+  "09:24","09:39","09:54","10:09",
+  "10:59","11:19","11:39","11:59",
+  "12:44",
+  "13:32","13:49",
+  "14:34","14:59",
+  "15:34","15:52",
+  "16:09","16:49",
+  "17:37","17:54",
+  "18:09","18:24","18:38",
+  "19:05","19:34",
+  "20:04","20:19","20:59",
+  "22:19"
+];
 
-  function updateBus() {
-    var now = new Date();
-    var nowMin = now.getHours() * 60 + now.getMinutes();
+function update() {
+  var now = new Date();
+  var nowMin = now.getHours() * 60 + now.getMinutes();
 
-    var next = null;
-    var next2 = null;
+  document.getElementById("now").innerText =
+    "現在時刻 " +
+    ("0"+now.getHours()).slice(-2) + ":" +
+    ("0"+now.getMinutes()).slice(-2);
 
-    for (var i = 0; i < times.length; i++) {
-      var t = times[i].split(":");
-      var m = parseInt(t[0],10)*60 + parseInt(t[1],10);
+  var next = null;
+  var after = null;
 
-      if (m >= nowMin) {
-        if (next === null) {
-          next = m;
-        } else {
-          next2 = m;
-          break;
-        }
-      }
-    }
-
-    if (next === null) {
-      document.getElementById("bus-next").innerHTML = "本日終了";
-      document.getElementById("bus-time").innerHTML = "";
-      document.getElementById("bus-next2").innerHTML = "";
-      return;
-    }
-
-    var diff = next - nowMin;
-    document.getElementById("bus-next").innerHTML = diff + " 分";
-    document.getElementById("bus-time").innerHTML =
-      Math.floor(next/60) + ":" + ("0"+(next%60)).slice(-2);
-
-    if (next2 !== null) {
-      document.getElementById("bus-next2").innerHTML =
-        Math.floor(next2/60) + ":" + ("0"+(next2%60)).slice(-2);
+  for (var i = 0; i < timetable.length; i++) {
+    var t = timetable[i].split(":");
+    var tMin = parseInt(t[0],10) * 60 + parseInt(t[1],10);
+    if (tMin >= nowMin) {
+      next = timetable[i];
+      after = timetable[i + 1] || null;
+      break;
     }
   }
 
-  updateBus();
-  setInterval(updateBus, 60000);
+  if (next) {
+    var n = next.split(":");
+    var diff = (parseInt(n[0],10)*60 + parseInt(n[1],10)) - nowMin;
+
+    document.getElementById("next").innerHTML =
+      "あと " + diff + " 分" +
+      "<small>" + next + "</small>";
+
+    document.getElementById("after").innerText =
+      after ? "次：" + after : "";
+  } else {
+    document.getElementById("next").innerText = "本日の運行終了";
+    document.getElementById("after").innerText = "";
+  }
+}
+
+update();
+setInterval(update, 60000);
 </script>
-
 </body>
-
-
+</html>
